@@ -1,51 +1,44 @@
-import java.util.Scanner;
+#include <stdio.h>
+#include <string.h>
 
-public class hill {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the plaintext (3 characters): ");
-        String plaintext = scanner.nextLine().toUpperCase();
+void main() {
+    unsigned int enc[3][3] = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
+    unsigned int dec[3][3] = {{8, 5, 10}, {21, 8, 21}, {21, 12, 8}};
 
-        // Ensure plaintext length is 3
-        if (plaintext.length() != 3) {
-            System.out.println("Plaintext must be exactly 3 characters long.");
-            return;
-        }
+    unsigned int pt[3];
+    unsigned int ct[3];
+    unsigned int res[3];
 
-        int[][] keyMatrix = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
-        int[] plaintextVector = {plaintext.charAt(0) - 'A', plaintext.charAt(1) - 'A', plaintext.charAt(2) - 'A'};
+    char plaintext[20];
+    gets(plaintext);
 
-        // Encryption
-        int[] ciphertextVector = multiplyMatrix(keyMatrix, plaintextVector);
-        String ciphertext = vectorToString(ciphertextVector);
-        System.out.println("Cipher text: " + ciphertext);
-
-        // Decryption
-        // Inverse of the key matrix
-        int[][] inverseKeyMatrix = {{8, 5, 10}, {21, 8, 21}, {21, 12, 8}};
-        int[] decipheredVector = multiplyMatrix(inverseKeyMatrix, ciphertextVector);
-        String decipheredText = vectorToString(decipheredVector);
-        System.out.println("Deciphered text: " + decipheredText);
+    for(int i=0; i<3; i++) {
+        pt[i] = plaintext[i] - 'A';
     }
 
-    // Matrix-vector multiplication
-    private static int[] multiplyMatrix(int[][] matrix, int[] vector) {
-        int[] result = new int[matrix.length];
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < vector.length; j++) {
-                result[i] += matrix[i][j] * vector[j];
-            }
-            result[i] %= 26; // Modulo 26
+    // encryption: 
+    for(int i=0; i<3; i++) {
+        int sum = 0;
+        for(int j=0; j<3; j++) {
+            sum+= pt[j] * enc[i][j];
         }
-        return result;
+        ct[i] = sum % 26;
     }
 
-    // Convert integer vector to string
-    private static String vectorToString(int[] vector) {
-        StringBuilder result = new StringBuilder();
-        for (int value : vector) {
-            result.append((char) (value + 'A'));
+    for(int i=0; i<3; i++) {
+        printf("%c ", ct[i] + 'A');
+    }
+
+    // decryption:
+    for(int i=0; i<3; i++) {
+        int sum = 0;
+        for(int j=0; j<3; j++) {
+            sum+=  ct[j] * dec[i][j];
         }
-        return result.toString();
+        res[i] = sum % 26;
+    }
+
+    for(int i=0; i<3; i++) {
+        printf("%c ", res[i] + 'A');
     }
 }
